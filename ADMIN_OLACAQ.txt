@@ -1,0 +1,115 @@
+import React from 'react';
+import { 
+  Users, LayoutGrid, Wallet, TrendingUp, 
+  Bell, Search, Settings, MoreVertical, 
+  Plus, ArrowUpRight, ArrowDownRight 
+} from 'lucide-react';
+
+export default function FakeDashboard() {
+  // --- FAKE DATALAR ---
+  const stats = [
+    { label: 'Ümumi İstifadəçi', value: '1,284', grow: '+12%', icon: Users, color: 'text-blue-600' },
+    { label: 'Aktiv Kateqoriya', value: '42', grow: '+3', icon: LayoutGrid, color: 'text-green-600' },
+    { label: 'Balans (AZN)', value: '12,450.00', grow: '+8.2%', icon: Wallet, color: 'text-purple-600' },
+    { label: 'Gündəlik Giriş', value: '312', grow: '-2%', icon: TrendingUp, color: 'text-orange-600' },
+  ];
+
+  const recentActivities = [
+    { id: 1, user: "Əli Məmmədov", action: "Yeni hesab yaratdı", time: "2 dəq əvvəl", status: "Tamamlandı" },
+    { id: 2, user: "Admin", action: "Elektronika kateqoriyasını yenilədi", time: "15 dəq əvvəl", status: "Gözləmədə" },
+    { id: 3, user: "Leyla Quliyeva", action: "Profil şəklini dəyişdi", time: "1 saat əvvəl", status: "Tamamlandı" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#f8f9fa] flex">
+      {/* Sidebar - Sol Menyu */}
+      <aside className="w-64 bg-white border-r border-gray-200 hidden lg:flex flex-col">
+        <div className="p-6 border-b">
+          <h2 className="text-2xl font-bold text-blue-600 tracking-tight">V1 CORE</h2>
+        </div>
+        <nav className="flex-1 p-4 space-y-2">
+          {['Dashboard', 'Users', 'Categories', 'Accounts', 'Reports', 'Settings'].map((item) => (
+            <div key={item} className={`p-3 rounded-lg cursor-pointer transition-all ${item === 'Dashboard' ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-gray-500 hover:bg-gray-100'}`}>
+              {item}
+            </div>
+          ))}
+        </nav>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col">
+        {/* Navbar */}
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8">
+          <div className="relative w-96">
+            <Search className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
+            <input type="text" placeholder="Sistemdə axtar..." className="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="relative"><Bell className="w-5 h-5 text-gray-500 cursor-pointer" /><span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full px-1">4</span></div>
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 border-2 border-white shadow-sm"></div>
+          </div>
+        </header>
+
+        <section className="p-8">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800">Xoş gəldiniz, Admin 👋</h1>
+              <p className="text-gray-500 text-sm">Sistemdəki son vəziyyət və router analitikası.</p>
+            </div>
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
+              <Plus className="w-4 h-4" /> Yeni Hesabat
+            </button>
+          </div>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {stats.map((stat, i) => (
+              <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div className="flex justify-between items-start mb-4">
+                  <div className={`p-2 rounded-lg bg-gray-50 ${stat.color}`}><stat.icon className="w-6 h-6" /></div>
+                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${stat.grow.startsWith('+') ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                    {stat.grow}
+                  </span>
+                </div>
+                <h3 className="text-gray-400 text-sm font-medium">{stat.label}</h3>
+                <p className="text-2xl font-bold text-gray-800 mt-1">{stat.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Recent Activity Table */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-6 border-b border-gray-50 flex justify-between items-center">
+              <h3 className="font-bold text-gray-800">Son Aktivliklər</h3>
+              <MoreVertical className="w-4 h-4 text-gray-400 cursor-pointer" />
+            </div>
+            <table className="w-full text-left">
+              <thead className="bg-gray-50 text-gray-400 text-xs uppercase font-semibold">
+                <tr>
+                  <th className="px-6 py-4">İstifadəçi</th>
+                  <th className="px-6 py-4">Əməliyyat</th>
+                  <th className="px-6 py-4">Zaman</th>
+                  <th className="px-6 py-4">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {recentActivities.map((act) => (
+                  <tr key={act.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 font-medium text-gray-700">{act.user}</td>
+                    <td className="px-6 py-4 text-gray-500 text-sm">{act.action}</td>
+                    <td className="px-6 py-4 text-gray-400 text-xs">{act.time}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${act.status === 'Tamamlandı' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}>
+                        {act.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}

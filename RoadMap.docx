@@ -1,0 +1,56 @@
+src/
+│
+├── app/
+│   ├── (public)/
+│   │   ├── page.tsx              // Home
+│   │   ├── listings/
+│   │   │   └── page.tsx          // Elanlar
+│   │   ├── listing/
+│   │   │   └── [id]/page.tsx     // Elan detail
+│   │   ├── login/page.tsx
+│   │   ├── register/page.tsx
+│   │
+│   ├── (dashboard)/
+│   │   ├── layout.tsx
+│   │   |                         // Kabinet
+│   │   ├── my-listings/page.tsx
+│   │   ├── messages/page.tsx
+│   │   └── escrow/page.tsx
+│   │
+│   ├── favico.ico                // Root layout
+│   ├── layout.tsx                // Root layout
+│   └── globals.css
+│
+├── components/
+│   ├── layout/
+│   │   ├── Navbar.tsx
+│   │   ├── Footer.tsx
+│   │   └── UserDropdown.tsx
+│   │
+│   ├── home/
+│   │   ├── Hero.tsx
+│   │   ├── SearchBar.tsx
+│   │   ├── Features.tsx
+│   │   ├── LatestListings.tsx
+│   │   └── CTA.tsx
+│   │
+│   ├── listing/
+│   │   ├── ListingCard.tsx
+│   │   └── ListingFilters.tsx
+│   │
+│   └── ui/
+│       ├── Button.tsx
+│       ├── Input.tsx
+│       └── Modal.tsx
+│
+├── lib/
+│   ├── api.ts
+│   ├── auth.ts
+│   └── utils.ts
+│
+├── types/
+│   ├── listing.ts
+│   └── user.ts
+│
+└── hooks/
+    └── useAuth.ts
