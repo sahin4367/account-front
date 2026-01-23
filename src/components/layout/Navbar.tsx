@@ -10,18 +10,17 @@ import UserDropdown from './UserDropdown';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Navbar() {
-  // ✅ ARTİQ AUTH BURADAN GƏLİR
   const { isAuthenticated } = useAuth();
 
   return (
     <header className="bg-white border-b sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        
         <Link href="/" className="text-2xl font-bold text-blue-600">
           <span className="underline">ACCOUNT</span>
           <span className="overline">market</span>
         </Link>
 
-        {/* 🔐 LOGIN OLUBSA */}
         {isAuthenticated && (
           <nav className="hidden lg:flex items-center space-x-6 font-medium text-gray-600">
             <Link href="/listings">Almaq</Link>
@@ -43,7 +42,6 @@ export default function Navbar() {
 
         <div className="flex items-center gap-4">
           {isAuthenticated ? (
-            // ✅ LOGIN EDİBSƏ
             <>
               <div className="hidden sm:flex flex-col items-end">
                 <span className="text-[10px] text-gray-400 font-bold">
@@ -54,6 +52,7 @@ export default function Navbar() {
                 </span>
               </div>
 
+
               <UserDropdown />
 
               <Link href="/sell">
@@ -63,8 +62,7 @@ export default function Navbar() {
               </Link>
             </>
           ) : (
-            // ❌ LOGIN OLMAYIBSA
-            <div className="flex items-center gap-2">
+            <>
               <Link
                 href="/login"
                 className="text-sm font-bold text-gray-600 hover:text-blue-600 px-4"
@@ -77,7 +75,7 @@ export default function Navbar() {
                   Qeydiyyat
                 </button>
               </Link>
-            </div>
+            </>
           )}
         </div>
       </div>

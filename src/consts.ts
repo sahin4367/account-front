@@ -1,5 +1,5 @@
 import 'dotenv/config'
 
 export const appConfig = { 
-    api_port : process.env.API_PORT
+    api_url : process.env.NEXT_PUBLIC_API_URL
 }

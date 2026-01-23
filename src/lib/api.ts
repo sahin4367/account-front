@@ -2,7 +2,7 @@ import axios from "axios";
 import { appConfig } from "../consts";
 
 const api = axios.create({
-  baseURL: `${appConfig.api_port}/api/v1`,
+  baseURL: `${appConfig.api_url}/api/v1`, 
 });
 
 api.interceptors.request.use((config) => {
