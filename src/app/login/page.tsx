@@ -2,10 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../context/AuthContext';
 import api from '../../lib/api';
-
-
+import { useAuth } from '../../context/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,19 +25,22 @@ export default function LoginPage() {
 
     try {
       const res = await api.post('/users/login', form);
+      const token = res.data.access_token;
 
-      /**
-       * Backend response gözlənilən:
-       * {
-       *   accessToken: string,
-       *   user: { id, username, email }
-       * }
-       */
-      login(res.data.accessToken, res.data.user);
+      localStorage.setItem('token', token);
+      login(token);
 
-      router.push('/');
+      alert('Uğurla daxil oldunuz! Email təsdiqi tələb olunur.');
+      router.push('/verify-email');
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Email və ya şifrə yanlışdır');
+      const msg = err.response?.data?.message;
+
+      if (msg === 'Email not verified!') {
+        alert('Email təsdiqlənməyib. Zəhmət olmasa email-i təsdiqləyin.');
+        router.push('/verify-email');
+      } else {
+        alert(msg || 'Email və ya şifrə yanlışdır');
+      }
     } finally {
       setLoading(false);
     }
@@ -60,6 +61,7 @@ export default function LoginPage() {
             placeholder="Email"
             className="input"
             onChange={handleChange}
+            value={form.email}
           />
 
           <input
@@ -69,6 +71,7 @@ export default function LoginPage() {
             placeholder="Şifrə"
             className="input"
             onChange={handleChange}
+            value={form.password}
           />
 
           <button
