@@ -1,40 +1,50 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { User, LogOut, ChevronDown, ShieldUser } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export default function UserDropdown() {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   return (
-    <div className="relative">
+    <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 font-bold text-gray-700 hover:text-blue-600"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg
+                  hover:bg-gray-100 transition"
       >
-        {user?.username || 'Hesab'}
+        <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+          <ShieldUser size={16} />
+        </div>
+
+        <ChevronDown size={14} />
       </button>
 
-
       {open && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border rounded-xl shadow-lg overflow-hidden z-50">
-          
-          <Link
-            href="/cabinet"
-            className="block px-4 py-3 text-sm hover:bg-gray-100"
-            onClick={() => setOpen(false)}
-          >
-            Kabinetim
-          </Link>
+        <div className="absolute right-0 mt-2 w-44 bg-[#1f2d3d]
+                        text-gray-100 rounded-md shadow-lg z-50">
 
           <Link
-            href="/settings"
-            className="block px-4 py-3 text-sm hover:bg-gray-100"
+            href="/profile"
             onClick={() => setOpen(false)}
+            className="flex items-center gap-2 px-4 py-3 hover:bg-[#2c3e50]"
           >
-            Ayarlar
+            <ShieldUser size={16} />
+            Profile
           </Link>
 
           <button
@@ -42,9 +52,10 @@ export default function UserDropdown() {
               logout();
               setOpen(false);
             }}
-            className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-gray-100"
+            className="w-full flex items-center gap-2 px-4 py-3 hover:bg-[#2c3e50]"
           >
-            Çıxış
+            <LogOut size={16} />
+            Log Out
           </button>
         </div>
       )}

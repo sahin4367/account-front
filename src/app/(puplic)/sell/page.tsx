@@ -6,10 +6,10 @@ export default function SellPage() {
     <section className="container mx-auto px-4 py-16">
       {/* HEADER */}
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <h1 className="text-4xl font-extrabold mb-4">
-          Sell Social Media Accounts on{" "}
-          <span className="text-blue-600">ACCOUNTmarket</span>
-        </h1>
+        <h2 className="text-4xl font-extrabold mb-4">
+          TikTok Hesabları və ya YouTube Kanallarını Satın{" "}
+          <span className="text-blue-600">ACCOUNTmarket -_|_-</span>
+        </h2>
 
         <p className="text-gray-500 text-lg">
           ACCOUNTmarket təhlükəsiz escrow sistemi ilə sosial media
@@ -105,3 +105,6 @@ function Category({
     </div>
   );
 }
+
+
+//-------------------------------

@@ -8,19 +8,34 @@ export default function VerifyYoutubePage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
+
+  function normalizeYoutubeInput(input: string): string | null {
+  const value = input.trim();
+
+  if (value.startsWith("@")) return value;
+  
+  if (value.startsWith("UC")) return value; 
+
+  const handleMatch = value.match(/youtube\.com\/@([A-Za-z0-9_.]+)/);
+  if (handleMatch) return `@${handleMatch[1]}`;
+
+  const channelMatch = value.match(/channel\/(UC[A-Za-z0-9_-]+)/);
+  if (channelMatch) return channelMatch[1];
+
+  return null;
+}
   const handleVerify = async () => {
-    if (!input) return;
+  const normalized = normalizeYoutubeInput(input);
 
-    setLoading(true);
+  if (!normalized) {
+    alert("Invalid YouTube username or channel ID");
+    return;
+  }
 
-    // HƏLƏ FAKE VERIFY (sonra API qoşarıq)
-    setTimeout(() => {
-      const platformId = input.trim();
-      router.push(
-        `dashboard/my-listings/create/details?platformId=${platformId}`
-      );
-    }, 800);
-  };
+  router.push(
+    `/dashboard/my-listings/create/details?platformId=${normalized}`
+  );
+};
 
   return (
     <section className="container mx-auto px-4 py-16 max-w-xl">
@@ -48,7 +63,7 @@ export default function VerifyYoutubePage() {
         onClick={handleVerify}
         disabled={loading}
         className="w-full bg-blue-600 text-white py-3 rounded-xl
-                   font-bold hover:bg-blue-700 disabled:opacity-50"
+                  font-bold hover:bg-blue-700 disabled:opacity-50"
       >
         {loading ? "Verifying..." : "Verify"}
       </button>
