@@ -12,7 +12,6 @@ export default function VerifyCodePage() {
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // console.log('TOKEN:', localStorage.getItem('token'))
 
     try {
       const res = await api.post('/users/verify-email-code', {

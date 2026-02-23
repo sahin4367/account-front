@@ -1,12 +1,22 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import api from '../lib/api';
+
+interface UserType {
+  id: number;
+  username: string;
+  email: string;
+  phone: string;
+  address: string;
+}
 
 interface AuthContextType {
   token: string | null;
+  user: UserType | null;
   isAuthenticated: boolean;
   loading: boolean;
-  login: (token: string) => void;
+  login: (token: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -18,26 +28,49 @@ export const AuthProvider = ({
   children: React.ReactNode;
 }) => {
   const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // 🔥 USER FETCH FUNCTION
+  const fetchUser = async (token: string) => {
+    try {
+      const res = await api.get('/users/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setUser(res.data);
+      setToken(token);
+    } catch (err) {
+      logout();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔁 APP AÇILANDA
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
 
     if (storedToken) {
-      setToken(storedToken);
+      fetchUser(storedToken);
+    } else {
+      setLoading(false);
     }
-
-    setLoading(false); 
   }, []);
 
-  const login = (newToken: string) => {
+  // 🔐 LOGIN
+  const login = async (newToken: string) => {
     localStorage.setItem('token', newToken);
-    setToken(newToken);
+    await fetchUser(newToken);
   };
 
+  // 🚪 LOGOUT
   const logout = () => {
     localStorage.removeItem('token');
     setToken(null);
+    setUser(null);
   };
 
   const isAuthenticated = !!token;
@@ -46,6 +79,7 @@ export const AuthProvider = ({
     <AuthContext.Provider
       value={{
         token,
+        user,
         isAuthenticated,
         loading,
         login,
@@ -66,8 +100,3 @@ export const useAuth = () => {
 
   return ctx;
 };
-
-
-
-//+++++++++++++++++++++++++++
-

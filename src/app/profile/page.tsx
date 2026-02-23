@@ -5,7 +5,6 @@ import { useAuth } from "../../context/AuthContext";
 export default function ProfilePage() {
   const { isAuthenticated, loading, user } = useAuth();
 
-  // ⏳ auth localStorage-dan oxunana qədər
   if (loading) {
     return (
       <div className="container mx-auto py-20 text-center text-gray-400">
@@ -13,7 +12,6 @@ export default function ProfilePage() {
       </div>
     );
   }
-
 
   if (!isAuthenticated) {
     return (
@@ -24,20 +22,18 @@ export default function ProfilePage() {
     );
   }
 
-
   return (
     <div className="container mx-auto py-16 max-w-4xl">
       <h1 className="text-3xl font-extrabold mb-8">Profilim</h1>
 
       <div className="bg-white rounded-xl shadow p-6 space-y-4">
+
+        {/* Profil şəkli */}
         <div className="flex justify-center mb-4">
-          {/* Profil şəkli */}
           <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center">
-            {user?.profileImage ? (
-              <img src={user.profileImage} alt="Profile" className="w-full h-full object-cover rounded-full" />
-            ) : (
-              <span className="text-xl font-semibold">S</span>
-            )}
+            <span className="text-xl font-semibold">
+              {user?.username?.[0]?.toUpperCase()}
+            </span>
           </div>
         </div>
 
@@ -50,27 +46,11 @@ export default function ProfilePage() {
         </div>
 
         <div>
-          <span className="font-semibold">Country:</span> {user?.country}
+          <span className="font-semibold">Phone:</span> {user?.phone}
         </div>
 
         <div>
-          <span className="font-semibold">City:</span> {user?.city}
-        </div>
-
-        <div>
-          <span className="font-semibold">Date Registered:</span> {new Date(user?.dateRegistered).toLocaleDateString()}
-        </div>
-
-        {/* Sosial media links */}
-        <div className="mt-4">
-          <h3 className="font-semibold">Sosial Media</h3>
-          <div className="flex gap-4 mt-2">
-            {user?.socialMedia?.map((platform, index) => (
-              <a key={index} href={platform.url} target="_blank" className="text-blue-500 hover:underline">
-                {platform.name}
-              </a>
-            ))}
-          </div>
+          <span className="font-semibold">Address:</span> {user?.address}
         </div>
 
         {/* Update button */}
@@ -86,6 +66,7 @@ export default function ProfilePage() {
             Delete Account
           </button>
         </div>
+
       </div>
     </div>
   );
