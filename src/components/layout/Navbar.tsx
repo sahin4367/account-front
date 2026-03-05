@@ -54,7 +54,7 @@ export default function Navbar() {
                 className="flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-blue-600"
                     >
                 <Search size={18} />
-                <span>Browse</span>
+                <span>Support</span>
               </Link>
 
               <Link
@@ -82,9 +82,9 @@ export default function Navbar() {
                 <span className="text-[10px] text-gray-400 font-bold">
                   Balans
                 </span>
-                <span className="text-sm font-bold text-green-600">
+                {/* <span className="text-sm font-bold text-green-600">
                   125.50 AZN
-                </span>
+                // </span> BURA DAHA DA FIX OLUNMALIDIR ESLINDE BELE SAXLANILA BILMEZ*/} 
               </div>
 
               <UserDropdown />

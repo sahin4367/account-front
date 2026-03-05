@@ -9,6 +9,7 @@ interface UserType {
   email: string;
   phone: string;
   address: string;
+  isVerifiedPhone: boolean;
 }
 
 interface AuthContextType {
@@ -18,6 +19,7 @@ interface AuthContextType {
   loading: boolean;
   login: (token: string) => Promise<void>;
   logout: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -31,15 +33,9 @@ export const AuthProvider = ({
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 USER FETCH FUNCTION
   const fetchUser = async (token: string) => {
     try {
-      const res = await api.get('/users/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const res = await api.get('/users/me');
       setUser(res.data);
       setToken(token);
     } catch (err) {
@@ -49,41 +45,44 @@ export const AuthProvider = ({
     }
   };
 
-  // 🔁 APP AÇILANDA
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
 
     if (storedToken) {
+      setToken(storedToken);
       fetchUser(storedToken);
     } else {
       setLoading(false);
     }
   }, []);
 
-  // 🔐 LOGIN
   const login = async (newToken: string) => {
     localStorage.setItem('token', newToken);
+    setToken(newToken);
     await fetchUser(newToken);
   };
 
-  // 🚪 LOGOUT
   const logout = () => {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
   };
 
-  const isAuthenticated = !!token;
+  const refreshUser = async () => {
+    if (!token) return;
+    await fetchUser(token);
+  };
 
   return (
     <AuthContext.Provider
       value={{
         token,
         user,
-        isAuthenticated,
+        isAuthenticated: !!token,
         loading,
         login,
         logout,
+        refreshUser,
       }}
     >
       {children}
@@ -93,10 +92,8 @@ export const AuthProvider = ({
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
-
   if (!ctx) {
     throw new Error('useAuth must be used inside AuthProvider');
   }
-
   return ctx;
 };
