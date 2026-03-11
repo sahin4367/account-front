@@ -112,7 +112,14 @@ export default function ProfilePage() {
           onClick={() => router.push("/profile/phone")}
           className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg"
         >
-          Phone Verify
+          Phone Verify  
+        </button>
+
+        <button
+        onClick={() => router.push("/profile/escrowpayments")}
+        className="w-full text-left px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all"
+        >
+        Payment Profiles
         </button>
 
         <button
@@ -121,6 +128,7 @@ export default function ProfilePage() {
         >
           Logout
         </button>
+        
       </div>
 
       <div className="flex-1 p-12">
