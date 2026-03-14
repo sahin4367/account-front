@@ -2,19 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import api from '../../lib/api';
 import { useAuth } from '../../context/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-
   const [loading, setLoading] = useState(false);
-
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
-  });
+  const [form, setForm] = useState({ email: '', password: '' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,31 +18,30 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setLoading(true);
-
     try {
       const res = await api.post('/users/login', form);
+      await login(res.data.access_token);
 
-      const token = res.data.access_token;
-
-      await login(token);
-
+      // Token save olduqdan sonra user məlumatını al
       const userRes = await api.get('/users/me');
-
       const user = userRes.data;
 
+      // Email verify olmayıbsa → verify-email səhifəsinə
       if (!user.isVerifiedEmail) {
-        router.push('/verify-email');
+        // Yeni kod göndər və code səhifəsinə yönləndir
+        await api.post('/users/verify-email');
+        router.push('/verify-email-code');
         return;
       }
 
+      // Telefon verify olmayıbsa → phone səhifəsinə
       if (!user.isVerifiedPhone) {
-        router.push('/verify-phone');
+        router.push('/profile/phone');
         return;
       }
 
-      router.push('/profile');
+      router.push('/');
 
     } catch (err: any) {
       alert(err.response?.data?.message || 'Email və ya şifrə yanlışdır');
@@ -56,45 +51,70 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border p-8">
+    <main className="min-h-screen flex items-center justify-center px-6">
+      <div className="w-full max-w-[400px]">
 
-        <h1 className="text-2xl font-bold text-center mb-6">
-          Daxil ol
-        </h1>
+        <div className="text-center mb-8">
+          <p className="font-display font-extrabold text-[22px]">
+            <span style={{ color: 'var(--yellow)' }}>ACCOUNT</span>
+            <span style={{ color: 'var(--text)' }}>market</span>
+          </p>
+          <p className="text-[13px] mt-1" style={{ color: 'var(--text3)' }}>Hesabınıza daxil olun</p>
+        </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <div
+          className="rounded-2xl p-8"
+          style={{ background: 'var(--black2)', border: '1px solid var(--border)' }}
+        >
+          <form onSubmit={handleLogin} className="flex flex-col gap-4">
 
-          <input
-            name="email"
-            type="email"
-            required
-            placeholder="Email"
-            className="input"
-            onChange={handleChange}
-            value={form.email}
-          />
+            <div>
+              <label className="block text-[11px] mb-1.5" style={{ color: 'var(--text3)' }}>
+                Email
+              </label>
+              <input
+                name="email"
+                type="email"
+                required
+                value={form.email}
+                onChange={handleChange}
+                className="input"
+                placeholder="email@example.com"
+              />
+            </div>
 
-          <input
-            name="password"
-            type="password"
-            required
-            placeholder="Şifrə"
-            className="input"
-            onChange={handleChange}
-            value={form.password}
-          />
+            <div>
+              <label className="block text-[11px] mb-1.5" style={{ color: 'var(--text3)' }}>
+                Şifrə
+              </label>
+              <input
+                name="password"
+                type="password"
+                required
+                value={form.password}
+                onChange={handleChange}
+                className="input"
+                placeholder="••••••••"
+              />
+            </div>
 
-          <button
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition disabled:opacity-60"
-          >
-            {loading ? 'Gözləyin...' : 'Daxil ol'}
-          </button>
+            <button
+              disabled={loading}
+              className="btn-primary w-full py-3 text-[14px] mt-2"
+            >
+              {loading ? 'Gözləyin...' : 'Daxil ol'}
+            </button>
 
-        </form>
+          </form>
 
+          <p className="text-[12px] text-center mt-5" style={{ color: 'var(--text3)' }}>
+            Hesabın yoxdur?{' '}
+            <Link href="/register" className="font-bold" style={{ color: 'var(--yellow)' }}>
+              Qeydiyyat
+            </Link>
+          </p>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

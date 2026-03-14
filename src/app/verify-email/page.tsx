@@ -1,107 +1,77 @@
-// 'use client';
-
-// import { useState } from 'react';
-// import api from '../../lib/api';
-
-// export default function VerifyEmailPage() {
-//   const [loading, setLoading] = useState(false);
-
-//   const sendCode = async () => {
-//     setLoading(true);
-//     try {
-//       const res = await api.post('/users/verify-email');
-//       alert(res.data.message);
-//     } catch (err: any) {
-//       alert(err.response?.data?.message || 'Xəta baş verdi');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-//       <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border p-8 text-center space-y-4">
-//         <h1 className="text-2xl font-bold">Email təsdiqi</h1>
-//         <p className="text-gray-500">
-//           Email-ə təsdiq kodu göndərmək üçün aşağıdakı düyməni bas.
-//         </p>
-
-//         <button
-//           onClick={sendCode}
-//           disabled={loading}
-//           className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition disabled:opacity-60"
-//         >
-//           {loading ? 'Göndərilir...' : 'Kodu göndər'}
-//         </button>
-
-//         <a href="/verify-email-code" className="block text-blue-600 font-semibold">
-//           Artıq kodun var? Təsdiqlə →
-//         </a>
-//       </div>
-//     </div>
-//   );
-// }
-
-
 'use client';
 
 import { useState } from 'react';
-import api from '../../lib/api';
 import { useRouter } from 'next/navigation';
+import api from '../../lib/api';
+
+// Bu səhifə yalnız LOGIN olmuş amma email verify etməmiş
+// istifadəçilər üçündür (login flow-dan gəlirlər)
 
 export default function VerifyEmailPage() {
-
   const router = useRouter();
-
   const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
 
   const sendCode = async () => {
-
     setLoading(true);
-
     try {
-
-      const res = await api.post('/users/verify-email');
-
-      alert(res.data.message);
-
-      router.push('/verify-email-code');
-
+      // Backend: POST /users/verify-email — yeni kod göndərir
+      await api.post('/users/verify-email');
+      setSent(true);
+      setTimeout(() => router.push('/verify-email-code'), 1500);
     } catch (err: any) {
-
       alert(err.response?.data?.message || 'Xəta baş verdi');
-
     } finally {
       setLoading(false);
     }
   };
 
   return (
-
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border p-8 text-center space-y-4">
-
-        <h1 className="text-2xl font-bold">
-          Email təsdiqi
-        </h1>
-
-        <p className="text-gray-500">
-          Emailə təsdiq kodu göndərmək üçün düyməni basın
-        </p>
-
-        <button
-          onClick={sendCode}
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold"
+    <main className="min-h-screen flex items-center justify-center px-6">
+      <div className="w-full max-w-[400px]">
+        <div
+          className="rounded-2xl p-8 text-center"
+          style={{ background: 'var(--black2)', border: '1px solid var(--border)' }}
         >
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center text-[26px] mx-auto mb-5"
+            style={{ background: 'var(--yellow-dim)', border: '1px solid var(--yellow-border)' }}
+          >
+            📧
+          </div>
 
-          {loading ? 'Göndərilir...' : 'Kodu göndər'}
+          <h1
+            className="font-display font-extrabold text-[22px] tracking-tight mb-2"
+            style={{ color: 'var(--text)' }}
+          >
+            Email Doğrulama
+          </h1>
+          <p className="text-[12px] mb-6" style={{ color: 'var(--text3)' }}>
+            Email ünvanınıza 6 rəqəmli təsdiq kodu göndəriləcək
+          </p>
 
-        </button>
-
+          {sent ? (
+            <div
+              className="rounded-xl p-3 text-[12px] font-medium"
+              style={{
+                background: 'rgba(34,197,94,0.1)',
+                border: '1px solid rgba(34,197,94,0.2)',
+                color: '#22c55e',
+              }}
+            >
+              ✓ Kod göndərildi, yönləndirilirsiniz...
+            </div>
+          ) : (
+            <button
+              onClick={sendCode}
+              disabled={loading}
+              className="btn-primary w-full py-3 text-[13px]"
+            >
+              {loading ? 'Göndərilir...' : 'Kodu Göndər'}
+            </button>
+          )}
+        </div>
       </div>
-
-    </div>
+    </main>
   );
 }

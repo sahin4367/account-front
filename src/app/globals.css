@@ -1,30 +1,139 @@
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap");
+
+/* Tailwind v4-də bütün standart bazanı, komponentləri və utilitləri bu tək sətir gətirir */
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --black: #0c0c0c;
+  --black2: #131313;
+  --black3: #1a1a1a;
+  --black4: #222222;
+
+  --yellow: #f5c518;
+  --yellow2: #ffd700;
+  --yellow-dim: rgba(245, 197, 24, 0.1);
+  --yellow-border: rgba(245, 197, 24, 0.22);
+
+  --text: #f0f0f0;
+  --text2: #a0a0a0;
+  --text3: #555555;
+
+  --border: rgba(255, 255, 255, 0.06);
+  --border2: rgba(255, 255, 255, 0.1);
+
+  --green: #22c55e;
+  --red: #ef4444;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--black);
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
+.font-display {
+  font-family: "Syne", sans-serif;
+}
+
+/* INPUT */
+
 .input {
-  @apply w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-600;
+  width: 100%;
+  background: var(--black3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.input:focus {
+  border-color: var(--yellow-border);
+}
+
+.input::placeholder {
+  color: var(--text3);
+}
+
+/* BUTTONS */
+
+.btn-primary {
+  background: var(--yellow);
+  color: var(--black);
+  font-family: "Syne", sans-serif;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: var(--yellow2);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text2);
+  font-weight: 500;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-ghost:hover {
+  color: var(--text);
+  border-color: var(--yellow-border);
+}
+
+/* CARDS */
+
+.card-base {
+  background: var(--black2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+/* NAVIGATION */
+
+.nav-item {
+  color: var(--text2);
+  transition: color 0.15s ease, background 0.15s ease;
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.nav-item:hover {
+  color: var(--yellow);
+  background: var(--yellow-dim);
+}
+
+/* SCROLLBAR HIDE */
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

@@ -10,6 +10,8 @@ interface UserType {
   phone: string;
   address: string;
   isVerifiedPhone: boolean;
+  isVerifiedEmail: boolean;  
+  avatar?: string;           
 }
 
 interface AuthContextType {
