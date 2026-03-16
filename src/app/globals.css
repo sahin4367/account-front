@@ -1,136 +1,94 @@
 @import "tailwindcss";
 
 :root {
-  --black: #0c0c0c;
-  --black2: #131313;
-  --black3: #1a1a1a;
-  --black4: #222222;
-
-  --yellow: #f5c518;
-  --yellow2: #ffd700;
-  --yellow-dim: rgba(245, 197, 24, 0.1);
-  --yellow-border: rgba(245, 197, 24, 0.22);
-
-  --text: #f0f0f0;
-  --text2: #a0a0a0;
-  --text3: #555555;
-
-  --border: rgba(255, 255, 255, 0.06);
-  --border2: rgba(255, 255, 255, 0.1);
-
-  --green: #22c55e;
-  --red: #ef4444;
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --color-bg:      #0a0a0a;
+  --color-surface: #111111;
+  --color-border:  rgba(255,255,255,0.07);
+  --color-text:    #f1f5f9;
+  --color-muted:   #64748b;
+  --color-primary: #f5c518;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+html, body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  margin: 0; padding: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
-body {
-  background-color: var(--black);
-  color: var(--text);
-  font-family: "Inter", sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-.font-display {
-  font-family: "Syne", sans-serif;
-}
-
-/* INPUT */
+.font-display { font-family: var(--font-display); }
 
 .input {
   width: 100%;
-  background: var(--black3);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  border-radius: 10px;
-  padding: 10px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: 12px;
+  padding: 12px 14px;
   font-size: 14px;
+  font-family: var(--font-body);
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: all .18s ease;
 }
-
+.input::placeholder { color: #475569; }
 .input:focus {
-  border-color: var(--yellow-border);
+  border-color: rgba(245,197,24,.5);
+  box-shadow: 0 0 0 3px rgba(245,197,24,.1);
 }
-
-.input::placeholder {
-  color: var(--text3);
-}
-
-/* BUTTONS */
 
 .btn-primary {
-  background: var(--yellow);
-  color: var(--black);
-  font-family: "Syne", sans-serif;
-  font-weight: 700;
+  background: var(--color-primary);
+  color: #000;
+  font-family: var(--font-display);
+  font-weight: 800;
   border: none;
-  border-radius: 10px;
-  padding: 10px 22px;
+  border-radius: 12px;
+  padding: 12px 26px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .18s ease;
+  text-decoration: none;
 }
-
 .btn-primary:hover {
-  background: var(--yellow2);
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 8px 24px rgba(245,197,24,.25);
 }
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+.btn-primary:active  { transform: translateY(0); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
 
 .btn-ghost {
   background: transparent;
-  color: var(--text2);
+  color: var(--color-muted);
+  font-family: var(--font-body);
   font-weight: 500;
-  border: 1px solid var(--border2);
-  border-radius: 10px;
-  padding: 10px 22px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 12px 26px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .18s ease;
 }
-
-.btn-ghost:hover {
-  color: var(--text);
-  border-color: var(--yellow-border);
-}
-
-/* CARDS */
-
-.card-base {
-  background: var(--black2);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 16px;
-}
-
-/* NAVIGATION */
+.btn-ghost:hover { color: #f1f5f9; border-color: rgba(255,255,255,.2); }
 
 .nav-item {
-  color: var(--text2);
-  transition: color 0.15s ease, background 0.15s ease;
-  border-radius: 8px;
-  padding: 6px 10px;
+  color: var(--color-muted);
+  padding: 7px 14px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+  transition: all .15s ease;
 }
+.nav-item:hover { color: var(--color-primary); background: rgba(245,197,24,.08); }
 
-.nav-item:hover {
-  color: var(--yellow);
-  background: var(--yellow-dim);
-}
-
-/* SCROLLBAR HIDE */
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

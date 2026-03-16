@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Syne, Inter } from "next/font/google";
+import { Outfit, Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import Navbar from "../components/layout/Navbar";
 
-const syne = Syne({
-  variable: "--font-syne",
+const outfit = Outfit({
+  variable: "--font-syne",   // var adı eyni qalır — heç nə dəyişmir
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 const inter = Inter({
@@ -29,8 +29,8 @@ export default function RootLayout({
   return (
     <html lang="az">
       <body
-        className={`${syne.variable} ${inter.variable}`}
-        style={{ background: '#0c0c0c', color: '#f0f0f0', minHeight: '100vh' }}
+        className={`${outfit.variable} ${inter.variable}`}
+        style={{ background: '#0a0a0a', color: '#f1f5f9', minHeight: '100vh' }}
       >
         <Providers>
           <Navbar />

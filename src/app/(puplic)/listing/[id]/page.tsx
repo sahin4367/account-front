@@ -21,11 +21,7 @@ interface ListingDetail {
   monthlyIncome?: number;
   views: number;
   status: string;
-  seller: {
-    id: number;
-    username: string;
-    avatar?: string;
-  };
+  seller: { id: number; username: string; avatar?: string; };
 }
 
 const PLATFORM_BG: Record<string, string> = {
@@ -37,16 +33,18 @@ const PLATFORM_BG: Record<string, string> = {
   TWITTER:   'linear-gradient(135deg,#111,#1d9bf0)',
 };
 
+const syne = 'var(--font-syne), Syne, sans-serif';
+
 export default function ListingDetailPage() {
   const { id }    = useParams();
   const router    = useRouter();
   const { isAuthenticated, user } = useAuth();
 
-  const [listing, setListing]         = useState<ListingDetail | null>(null);
-  const [loading, setLoading]         = useState(true);
+  const [listing, setListing]             = useState<ListingDetail | null>(null);
+  const [loading, setLoading]             = useState(true);
   const [escrowLoading, setEscrowLoading] = useState(false);
-  const [msgLoading, setMsgLoading]   = useState(false);
-  const [notFound, setNotFound]       = useState(false);
+  const [msgLoading, setMsgLoading]       = useState(false);
+  const [notFound, setNotFound]           = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -69,7 +67,7 @@ export default function ListingDetailPage() {
       const res = await api.post('/escrow/create', { listingId: Number(id) });
       router.push(`/escrow?dealId=${res.data.dealId}`);
     } catch (err: any) {
-      alert(err?.response?.data?.message || 'Xəta baş verdi');
+      alert(err?.response?.data?.message || 'Xeta bas verdi');
     } finally {
       setEscrowLoading(false);
     }
@@ -81,11 +79,10 @@ export default function ListingDetailPage() {
     try {
       const res = await api.post('/messages/start', {
         listingId: Number(id),
-        text:      'Salam! Bu elan haqda məlumat almaq istəyirəm.',
+        text: 'Salam! Bu elan haqda melumat almaq isteyirem.',
       });
       router.push(`/messages?convId=${res.data.conversationId}`);
-    } catch (err: any) {
-      // Söhbət artıq mövcuddursa bilavasitə yönləndir
+    } catch {
       router.push('/messages');
     } finally {
       setMsgLoading(false);
@@ -94,15 +91,15 @@ export default function ListingDetailPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen px-6 py-10">
-        <div className="container mx-auto max-w-[1000px]">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 flex flex-col gap-4">
-              <div className="h-[180px] rounded-2xl animate-pulse" style={{ background: 'var(--black2)' }} />
-              <div className="h-[120px] rounded-2xl animate-pulse" style={{ background: 'var(--black2)' }} />
-              <div className="h-[200px] rounded-2xl animate-pulse" style={{ background: 'var(--black2)' }} />
+      <main style={{ minHeight: '100vh', padding: '40px 24px', background: 'var(--black)' }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {[180, 120, 200].map(h => (
+                <div key={h} style={{ height: h, borderRadius: 16, background: 'var(--black2)' }} />
+              ))}
             </div>
-            <div className="h-[300px] rounded-2xl animate-pulse" style={{ background: 'var(--black2)' }} />
+            <div style={{ height: 300, borderRadius: 16, background: 'var(--black2)' }} />
           </div>
         </div>
       </main>
@@ -111,196 +108,273 @@ export default function ListingDetailPage() {
 
   if (notFound || !listing) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <span className="text-[40px]">😕</span>
-        <p className="font-display font-bold text-[18px]" style={{ color: 'var(--text)' }}>Elan tapılmadı</p>
+      <main style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 16,
+        background: 'var(--black)',
+      }}>
+        <span style={{ fontSize: 48 }}>&#128533;</span>
+        <p style={{ fontFamily: syne, fontWeight: 700, fontSize: 18, color: 'var(--text)' }}>
+          Elan tapilmadi
+        </p>
         <Link href="/listings">
-          <button className="btn-primary px-6 py-2 text-[13px]">Elanlara qayıt</button>
+          <button className="btn-primary" style={{ fontSize: 13, padding: '8px 20px' }}>
+            Elanlara qayit
+          </button>
         </Link>
-      </div>
+      </main>
     );
   }
 
   const isOwner = user?.id === listing.seller?.id;
 
   return (
-    <main className="min-h-screen px-6 py-10">
-      <div className="container mx-auto max-w-[1000px]">
+    <main style={{ minHeight: '100vh', padding: '40px 24px', background: 'var(--black)' }}>
+      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
 
+        {/* Back */}
         <Link
           href="/listings"
-          className="inline-flex items-center gap-1 text-[12px] mb-6"
-          style={{ color: 'var(--text3)' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--text3)', marginBottom: 24, textDecoration: 'none' }}
         >
-          ← Elanlara qayıt
+          &#8592; Elanlara qayit
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }} className="detail-grid">
+          <style>{`
+            @media (min-width: 1024px) {
+              .detail-grid { grid-template-columns: 2fr 1fr !important; }
+            }
+          `}</style>
 
-          {/* ── LEFT ── */}
-          <div className="lg:col-span-2 flex flex-col gap-4">
+          {/* LEFT */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
             {/* Banner */}
-            <div
-              className="h-[180px] rounded-2xl flex items-center justify-center relative overflow-hidden"
-              style={{ background: PLATFORM_BG[listing.platform] ?? '#222' }}
-            >
-              <span
-                className="font-display font-extrabold text-[15px] px-4 py-1.5 rounded-full"
-                style={{ background: 'rgba(0,0,0,0.35)', color: '#fff' }}
-              >
+            <div style={{
+              height: 180,
+              borderRadius: 16,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative',
+              overflow: 'hidden',
+              background: PLATFORM_BG[listing.platform] ?? '#222',
+            }}>
+              <span style={{
+                fontFamily: syne,
+                fontWeight: 800,
+                fontSize: 15,
+                padding: '6px 16px',
+                borderRadius: 100,
+                background: 'rgba(0,0,0,0.35)',
+                color: '#fff',
+              }}>
                 {listing.platform}
               </span>
-              <span
-                className="absolute top-3 right-3 text-[10px] px-2 py-1 rounded-lg"
-                style={{ background: 'rgba(0,0,0,0.4)', color: '#fff' }}
-              >
-                👁 {listing.views} baxış
+              <span style={{
+                position: 'absolute',
+                top: 12,
+                right: 12,
+                fontSize: 10,
+                padding: '4px 8px',
+                borderRadius: 8,
+                background: 'rgba(0,0,0,0.4)',
+                color: '#fff',
+              }}>
+                &#128065; {listing.views} baxis
               </span>
             </div>
 
-            {/* Title */}
-            <div
-              className="rounded-2xl p-6"
-              style={{ background: 'var(--black2)', border: '1px solid var(--border)' }}
-            >
-              <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--text3)' }}>
+            {/* Title block */}
+            <div style={{
+              borderRadius: 16,
+              padding: 24,
+              background: 'var(--black2)',
+              border: '1px solid var(--border)',
+            }}>
+              <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--text3)', marginBottom: 8 }}>
                 {listing.platform}
               </p>
-              <h1 className="font-display font-extrabold text-[24px] tracking-tight mb-2" style={{ color: 'var(--text)' }}>
+              <h1 style={{
+                fontFamily: syne,
+                fontWeight: 800,
+                fontSize: 24,
+                letterSpacing: '-0.5px',
+                color: 'var(--text)',
+                marginBottom: 8,
+              }}>
                 {listing.title}
               </h1>
-              <p className="text-[13px] leading-relaxed" style={{ color: 'var(--text2)' }}>
+              <p style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text2)' }}>
                 {listing.description}
               </p>
             </div>
 
-            {/* Stats */}
-            <div
-              className="rounded-2xl p-6"
-              style={{ background: 'var(--black2)', border: '1px solid var(--border)' }}
-            >
-              <p className="font-display font-bold text-[11px] uppercase tracking-widest mb-4" style={{ color: 'var(--text3)' }}>
-                Hesab Məlumatları
+            {/* Stats grid */}
+            <div style={{
+              borderRadius: 16,
+              padding: 24,
+              background: 'var(--black2)',
+              border: '1px solid var(--border)',
+            }}>
+              <p style={{
+                fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
+                letterSpacing: '0.8px', color: 'var(--text3)', marginBottom: 16,
+              }}>
+                Hesab Melumatlari
               </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
                 {[
-                  { label: 'İzləyici',    value: listing.followers?.toLocaleString() },
-                  { label: 'Engagement',  value: listing.engagementRate ?? '—'       },
-                  { label: 'Ölkə',        value: listing.country ?? '—'              },
-                  { label: 'Hesab yaşı',  value: listing.age ?? '—'                  },
-                  { label: 'Niş',         value: listing.niche ?? '—'                },
-                  { label: 'Aylıq gəlir', value: listing.monthlyIncome ? `${listing.monthlyIncome} AZN` : '—' },
+                  { label: 'Izleyici',    value: listing.followers?.toLocaleString() },
+                  { label: 'Engagement',  value: listing.engagementRate ?? '-'        },
+                  { label: 'Olke',        value: listing.country ?? '-'               },
+                  { label: 'Hesab yasi',  value: listing.age ?? '-'                   },
+                  { label: 'Nis',         value: listing.niche ?? '-'                 },
+                  { label: 'Aylig gelir', value: listing.monthlyIncome ? `${listing.monthlyIncome} AZN` : '-' },
                 ].map(s => (
-                  <div
-                    key={s.label}
-                    className="rounded-xl p-3"
-                    style={{ background: 'var(--black3)', border: '1px solid var(--border)' }}
-                  >
-                    <p className="text-[10px] mb-1" style={{ color: 'var(--text3)' }}>{s.label}</p>
-                    <p className="font-display font-bold text-[14px]" style={{ color: 'var(--text)' }}>{s.value}</p>
+                  <div key={s.label} style={{
+                    borderRadius: 10,
+                    padding: 12,
+                    background: 'var(--black3)',
+                    border: '1px solid var(--border)',
+                  }}>
+                    <p style={{ fontSize: 10, color: 'var(--text3)', marginBottom: 4 }}>{s.label}</p>
+                    <p style={{ fontFamily: syne, fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>
+                      {s.value}
+                    </p>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Escrow info */}
-            <div
-              className="rounded-2xl p-5 flex items-start gap-4"
-              style={{ background: 'var(--yellow-dim)', border: '1px solid var(--yellow-border)' }}
-            >
-              <span className="text-[22px]">🛡️</span>
+            <div style={{
+              borderRadius: 16,
+              padding: 20,
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 16,
+              background: 'var(--yellow-dim)',
+              border: '1px solid var(--yellow-border)',
+            }}>
+              <span style={{ fontSize: 22 }}>&#128737;</span>
               <div>
-                <p className="font-display font-bold text-[13px] mb-1" style={{ color: 'var(--yellow)' }}>
-                  Escrow ilə qorunmuş alqı-satqı
+                <p style={{ fontFamily: syne, fontWeight: 700, fontSize: 13, color: 'var(--yellow)', marginBottom: 4 }}>
+                  Escrow ile qorunmus alis-veris
                 </p>
-                <p className="text-[11px] leading-relaxed" style={{ color: 'var(--text2)' }}>
-                  Ödənişin <strong style={{ color: 'var(--text)' }}>100%</strong>-i əvvəlcə sistemdə saxlanılır.
-                  Hesabı aldıqdan sonra satıcıya köçürülür. Problem olarsa tam geri qaytarılır.
+                <p style={{ fontSize: 11, lineHeight: 1.6, color: 'var(--text2)' }}>
+                  Odenisin <strong style={{ color: 'var(--text)' }}>100%</strong>-i evvelce sistemde saxlanilir.
+                  Hesabi alandan sonra saticiya kocurulur. Problem olarsa tam geri qaytarilir.
                 </p>
               </div>
             </div>
 
           </div>
 
-          {/* ── RIGHT ── */}
-          <div className="flex flex-col gap-4">
-            <div
-              className="rounded-2xl p-6 sticky top-[72px]"
-              style={{ background: 'var(--black2)', border: '1px solid var(--border)' }}
-            >
-              <p className="text-[11px] mb-1" style={{ color: 'var(--text3)' }}>Qiymət</p>
-              <p className="font-display font-extrabold text-[32px] tracking-tight mb-1" style={{ color: 'var(--text)' }}>
-                {listing.price} <span className="text-[16px]">AZN</span>
+          {/* RIGHT */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+            {/* Price card */}
+            <div style={{
+              borderRadius: 16,
+              padding: 24,
+              background: 'var(--black2)',
+              border: '1px solid var(--border)',
+              position: 'sticky',
+              top: 72,
+            }}>
+              <p style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 4 }}>Qiymet</p>
+              <p style={{ fontFamily: syne, fontWeight: 800, fontSize: 32, letterSpacing: '-1px', color: 'var(--text)', marginBottom: 4 }}>
+                {listing.price} <span style={{ fontSize: 16, fontWeight: 400 }}>AZN</span>
               </p>
-              <p className="text-[11px] mb-5" style={{ color: 'var(--text3)' }}>
-                {listing.priceType === 'fixed' ? 'Sabit qiymət' : 'Müzakirə mümkündür'}
+              <p style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 20 }}>
+                {listing.priceType === 'fixed' ? 'Sabit qiymet' : 'Muzakire mumkundur'}
               </p>
 
               {isOwner ? (
-                <div
-                  className="rounded-xl p-3 text-center text-[12px]"
-                  style={{ background: 'var(--black3)', color: 'var(--text3)' }}
-                >
-                  Bu sizin elanınızdır
+                <div style={{
+                  borderRadius: 10,
+                  padding: 12,
+                  textAlign: 'center',
+                  fontSize: 12,
+                  background: 'var(--black3)',
+                  color: 'var(--text3)',
+                }}>
+                  Bu sizin elaninizdir
                 </div>
               ) : (
                 <>
                   <button
                     onClick={handleBuy}
                     disabled={escrowLoading || listing.status === 'SOLD'}
-                    className="btn-primary w-full py-3 text-[14px] mb-3"
+                    className="btn-primary"
+                    style={{ width: '100%', padding: '12px', fontSize: 14, marginBottom: 10 }}
                   >
                     {listing.status === 'SOLD'
-                      ? '✕ Satılıb'
+                      ? 'Satildi'
                       : escrowLoading
-                      ? 'Yönləndirilir...'
-                      : '🛡️ Escrow ilə Al'}
+                      ? 'Yonlendirilir...'
+                      : '&#128737; Escrow ile Al'}
                   </button>
 
                   <button
                     onClick={handleMessage}
                     disabled={msgLoading}
-                    className="btn-ghost w-full py-3 text-[13px]"
-                    style={{ fontFamily: 'Inter, sans-serif' }}
+                    className="btn-ghost"
+                    style={{ width: '100%', padding: '12px', fontSize: 13 }}
                   >
-                    {msgLoading ? '...' : '💬 Satıcıya Yaz'}
+                    {msgLoading ? '...' : 'Saticiya Yaz'}
                   </button>
                 </>
               )}
 
-              <p className="text-[10px] text-center mt-4" style={{ color: 'var(--text3)' }}>
+              <p style={{ fontSize: 10, textAlign: 'center', marginTop: 12, color: 'var(--text3)' }}>
                 Escrow sistemi sizi tam qoruyur
               </p>
             </div>
 
-            {/* Seller */}
+            {/* Seller card */}
             {listing.seller && (
-              <div
-                className="rounded-2xl p-5"
-                style={{ background: 'var(--black2)', border: '1px solid var(--border)' }}
-              >
-                <p className="font-display font-bold text-[11px] uppercase tracking-widest mb-4" style={{ color: 'var(--text3)' }}>
-                  Satıcı
+              <div style={{
+                borderRadius: 16,
+                padding: 20,
+                background: 'var(--black2)',
+                border: '1px solid var(--border)',
+              }}>
+                <p style={{
+                  fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
+                  letterSpacing: '0.8px', color: 'var(--text3)', marginBottom: 16,
+                }}>
+                  Satici
                 </p>
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center font-display font-bold text-[14px]"
-                    style={{ background: 'var(--yellow-dim)', color: 'var(--yellow)', border: '1px solid var(--yellow-border)' }}
-                  >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{
+                    width: 40, height: 40, borderRadius: '50%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontFamily: syne, fontWeight: 700, fontSize: 16,
+                    background: 'var(--yellow-dim)',
+                    color: 'var(--yellow)',
+                    border: '1px solid var(--yellow-border)',
+                    flexShrink: 0,
+                  }}>
                     {listing.seller.username?.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-bold text-[13px]" style={{ color: 'var(--text)' }}>
+                    <p style={{ fontWeight: 600, fontSize: 13, color: 'var(--text)' }}>
                       {listing.seller.username}
                     </p>
-                    <p className="text-[11px]" style={{ color: 'var(--text3)' }}>Satıcı</p>
+                    <p style={{ fontSize: 11, color: 'var(--text3)' }}>Satici</p>
                   </div>
                 </div>
               </div>
             )}
-          </div>
 
+          </div>
         </div>
       </div>
     </main>

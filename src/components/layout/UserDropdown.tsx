@@ -5,11 +5,17 @@ import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 
+const MENU_ITEMS = [
+  { href: '/profile',     label: 'Profil'    },
+  { href: '/my-listings', label: 'Elanlarım' },
+  { href: '/escrow',      label: 'Escrow'    },
+];
+
 export default function UserDropdown() {
   const { user, logout } = useAuth();
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  const [open, setOpen]  = useState(false);
+  const ref              = useRef<HTMLDivElement>(null);
+  const router           = useRouter();
 
   useEffect(() => {
     const h = (e: MouseEvent) => {
@@ -23,56 +29,53 @@ export default function UserDropdown() {
 
   return (
     <div ref={ref} className="relative">
+
+      {/* Avatar düyməsi */}
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors"
-        style={{ background: open ? 'var(--black3)' : 'transparent' }}
+        className={`flex items-center gap-2 p-1.5 rounded-xl transition-all ${
+          open ? 'bg-white/[0.06]' : 'hover:bg-white/[0.04]'
+        }`}
       >
-        <div
-          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold font-display"
-          style={{ background: 'var(--yellow-dim)', color: 'var(--yellow)', border: '1px solid var(--yellow-border)' }}
-        >
+        <div className="w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-black font-display bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
           {initial}
         </div>
       </button>
 
+      {/* Dropdown */}
       {open && (
-        <div
-          className="absolute right-0 mt-2 w-48 rounded-xl overflow-hidden z-50"
-          style={{ background: 'var(--black3)', border: '1px solid var(--border2)' }}
-        >
-          <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--border)' }}>
-            <p className="text-[13px] font-semibold" style={{ color: 'var(--text)' }}>{user?.username}</p>
-            <p className="text-[11px]" style={{ color: 'var(--text3)' }}>{user?.email}</p>
+        <div className="absolute right-0 mt-2 w-52 rounded-2xl overflow-hidden z-50 bg-[#161616] border border-white/[0.08] shadow-2xl shadow-black/50">
+
+          {/* User info */}
+          <div className="px-4 py-3.5 border-b border-white/[0.06]">
+            <p className="text-[13px] font-bold text-white">{user?.username}</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">{user?.email}</p>
           </div>
 
-          {[
-            { href: '/profile', label: 'Profil' },
-            { href: '/my-listings', label: 'Elanlarım' },
-            { href: '/escrow', label: 'Escrow' },
-          ].map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setOpen(false)}
-              className="block px-4 py-2.5 text-[13px] transition-colors"
-              style={{ color: 'var(--text2)' }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'var(--black4)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            >
-              {label}
-            </Link>
-          ))}
+          {/* Menu items */}
+          <div className="py-1.5">
+            {MENU_ITEMS.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className="flex items-center px-4 py-2.5 text-[13px] text-slate-400 hover:text-white hover:bg-white/[0.04] transition-all"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
 
-          <button
-            onClick={() => { logout(); setOpen(false); router.push('/'); }}
-            className="w-full text-left px-4 py-2.5 text-[13px] transition-colors"
-            style={{ color: 'var(--red)', borderTop: '1px solid var(--border)' }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'var(--black4)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-          >
-            Çıxış
-          </button>
+          {/* Logout */}
+          <div className="border-t border-white/[0.06] py-1.5">
+            <button
+              onClick={() => { logout(); setOpen(false); router.push('/'); }}
+              className="w-full text-left px-4 py-2.5 text-[13px] text-red-400 hover:text-red-300 hover:bg-red-500/[0.06] transition-all"
+            >
+              Cixis
+            </button>
+          </div>
+
         </div>
       )}
     </div>

@@ -2,27 +2,32 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useAuth } from '../../../context/AuthContext'
 import api from '../../../lib/api'
 
 type Method = 'BALANCE' | 'PAYPAL' | 'BANK'
 
+const METHODS: { key: Method; label: string; desc: string }[] = [
+  { key: 'BALANCE', label: 'ACCOUNTmarket Balans',    desc: 'Qazancınız birbaşa platforma balansınıza köçürülür'  },
+  { key: 'PAYPAL',  label: 'PayPal',                  desc: 'PayPal hesabınıza avtomatik ödəniş'                  },
+  { key: 'BANK',    label: 'Bank Kocurmesi (Wise)',   desc: 'Wise vasitesile bank hesabiniza beynelxalq kocurme'  },
+]
+
 export default function PaymentsPage() {
   const { isAuthenticated, loading: authLoading } = useAuth()
   const router = useRouter()
 
-  const [method, setMethod]           = useState<Method>('PAYPAL')
-  const [paypalEmail, setPaypalEmail] = useState('')
-  const [bankDetails, setBankDetails] = useState('')
-  const [loading, setLoading]         = useState(false)
+  const [method, setMethod]             = useState<Method>('PAYPAL')
+  const [paypalEmail, setPaypalEmail]   = useState('')
+  const [bankDetails, setBankDetails]   = useState('')
+  const [loading, setLoading]           = useState(false)
   const [fetchLoading, setFetchLoading] = useState(true)
-  const [saved, setSaved]             = useState(false)
+  const [saved, setSaved]               = useState(false)
 
-  // Mövcud payment profile-u yüklə
   useEffect(() => {
     if (authLoading) return
     if (!isAuthenticated) { router.push('/login'); return }
-
     const load = async () => {
       try {
         const res = await api.get('/pay-profile/payment-profile')
@@ -31,18 +36,14 @@ export default function PaymentsPage() {
           setPaypalEmail(res.data.paypalEmail ?? '')
           setBankDetails(res.data.bankDetails ?? '')
         }
-      } catch {
-        // yeni istifadəçi — boş form
-      } finally {
-        setFetchLoading(false)
-      }
+      } catch {}
+      finally { setFetchLoading(false) }
     }
     load()
   }, [isAuthenticated, authLoading, router])
 
   const handleUpdate = async () => {
-    setLoading(true)
-    setSaved(false)
+    setLoading(true); setSaved(false)
     try {
       await api.put('/pay-profile/payment-profile', {
         method,
@@ -52,107 +53,77 @@ export default function PaymentsPage() {
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
     } catch (err: any) {
-      alert(err?.response?.data?.message || 'Xəta baş verdi')
-    } finally {
-      setLoading(false)
-    }
+      alert(err?.response?.data?.message || 'Xeta bas verdi')
+    } finally { setLoading(false) }
   }
 
   if (authLoading || fetchLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p style={{ color: 'var(--text3)' }}>Yüklənir...</p>
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <p className="text-slate-500 text-[13px]">Yuklenir...</p>
       </div>
     )
   }
 
-  const METHODS: { key: Method; label: string; desc: string }[] = [
-    { key: 'BALANCE', label: 'ACCOUNTmarket Balans',    desc: 'Qazancınız birbaşa platforma balansınıza köçürülür'         },
-    { key: 'PAYPAL',  label: 'PayPal',                  desc: 'PayPal hesabınıza avtomatik ödəniş'                          },
-    { key: 'BANK',    label: 'Bank Köçürməsi (Wise.com)',desc: 'Wise vasitəsilə bank hesabınıza beynəlxalq köçürmə'         },
-  ]
-
   return (
-    <main className="min-h-screen px-6 py-10">
-      <div className="container mx-auto max-w-[640px]">
+    <main className="min-h-screen bg-[#0a0a0a] text-white px-6 py-12">
+      <div className="max-w-[640px] mx-auto">
+
+        {/* Geri */}
+        <Link href="/profile" className="inline-flex items-center gap-1.5 text-[12px] text-slate-500 hover:text-white transition-colors mb-8">
+          &#8592; Profile qayit
+        </Link>
 
         {/* Header */}
         <div className="mb-8">
-          <h1
-            className="font-display font-extrabold text-[28px] tracking-tight mb-1"
-            style={{ color: 'var(--text)' }}
-          >
-            Ödəniş Profili
+          <h1 className="font-display font-black text-[28px] tracking-tight text-white">
+            Odenis Profili
           </h1>
-          <p className="text-[13px]" style={{ color: 'var(--text3)' }}>
-            Escrow dealları tamamlandıqda ödənişi necə almaq istədiyinizi seçin
+          <p className="text-slate-500 text-[13px] mt-2">
+            Escrow deallari tamamlandigda odenisi nece almaq istediginizi secin
           </p>
         </div>
 
         {/* Method seçimi */}
-        <div
-          className="rounded-2xl p-6 mb-4"
-          style={{ background: 'var(--black2)', border: '1px solid var(--border)' }}
-        >
-          <p
-            className="font-display font-bold text-[11px] uppercase tracking-widest mb-4"
-            style={{ color: 'var(--text3)' }}
-          >
-            Ödəniş Üsulu
+        <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6 mb-4">
+          <p className="text-[10px] font-black uppercase tracking-[1.5px] text-slate-500 mb-5">
+            Odenis Usulu
           </p>
-
           <div className="flex flex-col gap-3">
             {METHODS.map(m => (
-              <label
+              <div
                 key={m.key}
                 onClick={() => setMethod(m.key)}
                 className="flex items-start gap-4 p-4 rounded-xl cursor-pointer transition-all"
                 style={{
-                  background: method === m.key ? 'var(--yellow-dim)' : 'var(--black3)',
-                  border: `1px solid ${method === m.key ? 'var(--yellow-border)' : 'var(--border)'}`,
+                  background:  method === m.key ? 'rgba(245,197,24,0.08)' : 'rgba(255,255,255,0.03)',
+                  border:      `1px solid ${method === m.key ? 'rgba(245,197,24,0.25)' : 'rgba(255,255,255,0.07)'}`,
                 }}
               >
-                {/* Custom radio */}
+                {/* Radio */}
                 <div
                   className="w-5 h-5 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center"
-                  style={{
-                    border: `2px solid ${method === m.key ? 'var(--yellow)' : 'var(--text3)'}`,
-                  }}
+                  style={{ border: `2px solid ${method === m.key ? '#f5c518' : '#475569'}` }}
                 >
                   {method === m.key && (
-                    <div
-                      className="w-2.5 h-2.5 rounded-full"
-                      style={{ background: 'var(--yellow)' }}
-                    />
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
                   )}
                 </div>
-
                 <div>
-                  <p
-                    className="font-display font-bold text-[13px] mb-0.5"
-                    style={{ color: method === m.key ? 'var(--yellow)' : 'var(--text)' }}
-                  >
+                  <p className={`font-display font-bold text-[13px] mb-0.5 ${method === m.key ? 'text-yellow-500' : 'text-white'}`}>
                     {m.label}
                   </p>
-                  <p className="text-[11px]" style={{ color: 'var(--text3)' }}>
-                    {m.desc}
-                  </p>
+                  <p className="text-[11px] text-slate-500">{m.desc}</p>
                 </div>
-              </label>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* PayPal email */}
+        {/* PayPal */}
         {method === 'PAYPAL' && (
-          <div
-            className="rounded-2xl p-6 mb-4"
-            style={{ background: 'var(--black2)', border: '1px solid var(--border)' }}
-          >
-            <p
-              className="font-display font-bold text-[11px] uppercase tracking-widest mb-3"
-              style={{ color: 'var(--text3)' }}
-            >
+          <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6 mb-4">
+            <p className="text-[10px] font-black uppercase tracking-[1.5px] text-slate-500 mb-4">
               PayPal Email
             </p>
             <input
@@ -165,74 +136,51 @@ export default function PaymentsPage() {
           </div>
         )}
 
-        {/* Bank details */}
+        {/* Bank */}
         {method === 'BANK' && (
-          <div
-            className="rounded-2xl p-6 mb-4"
-            style={{ background: 'var(--black2)', border: '1px solid var(--border)' }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <p
-                className="font-display font-bold text-[11px] uppercase tracking-widest"
-                style={{ color: 'var(--text3)' }}
-              >
-                Bank Məlumatları
-              </p>
+          <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6 mb-4">
+            <p className="text-[10px] font-black uppercase tracking-[1.5px] text-slate-500 mb-4">
+              Bank Melumatlari
+            </p>
+            <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 mb-4 text-[11px] leading-relaxed text-slate-500">
+              <p className="text-slate-400 mb-2">Wise.com hesab emaili ve ya:</p>
+              <p>🇺🇸 ABŞ: Routing, Hesab nomresi, Ad, Soyad, Unvan</p>
+              <p className="mt-1">🌍 Diger: IBAN, BIC/SWIFT, Hesab nomresi, Ad, Soyad, Unvan</p>
             </div>
-
-            <div
-              className="rounded-xl p-4 mb-4 text-[11px] leading-relaxed"
-              style={{ background: 'var(--black3)', border: '1px solid var(--border)', color: 'var(--text3)' }}
-            >
-              <p className="mb-1" style={{ color: 'var(--text2)' }}>Wise.com hesab emaili <span style={{ color: 'var(--text3)' }}>və ya:</span></p>
-              <p>🇺🇸 ABŞ: Routing nömrəsi, Hesab nömrəsi, Ad, Soyad, Ünvan</p>
-              <p className="mt-1">🌍 Digər: IBAN, BIC/SWIFT, Hesab nömrəsi, Ad, Soyad, Ünvan</p>
-            </div>
-
             <textarea
               value={bankDetails}
               onChange={e => setBankDetails(e.target.value)}
-              placeholder="Wise email və ya bank məlumatlarınızı daxil edin..."
+              placeholder="Wise email ve ya bank melumatlarinizi daxil edin..."
               rows={5}
               className="input resize-none"
             />
           </div>
         )}
 
-        {/* BALANCE info */}
+        {/* Balance info */}
         {method === 'BALANCE' && (
-          <div
-            className="rounded-2xl p-5 mb-4 flex items-start gap-3"
-            style={{ background: 'var(--yellow-dim)', border: '1px solid var(--yellow-border)' }}
-          >
+          <div className="bg-yellow-500/[0.06] border border-yellow-500/20 rounded-2xl p-5 mb-4 flex items-start gap-3">
             <span className="text-[20px]">💡</span>
             <div>
-              <p className="font-display font-bold text-[13px] mb-1" style={{ color: 'var(--yellow)' }}>
-                Balans haqqında
+              <p className="font-display font-bold text-[13px] text-yellow-500 mb-1">
+                Balans haqqinda
               </p>
-              <p className="text-[11px] leading-relaxed" style={{ color: 'var(--text2)' }}>
-                Qazandığınız məbləğ ACCOUNTmarket balansınıza əlavə olunur.
-                Balansı yeni hesab almaq üçün istifadə edə bilərsiniz.
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                Qazandiginiz meblej ACCOUNTmarket balansına elave olunur.
+                Balansi yeni hesab almaq ucun istifade ede bilersiniz.
               </p>
             </div>
           </div>
         )}
 
-        {/* Save button */}
-        <button
-          onClick={handleUpdate}
-          disabled={loading}
-          className="btn-primary w-full py-3 text-[14px]"
-        >
-          {loading ? 'Saxlanılır...' : 'Yadda Saxla'}
+        {/* Save */}
+        <button onClick={handleUpdate} disabled={loading} className="btn-primary w-full py-3 text-[14px]">
+          {loading ? 'Saxlanilir...' : 'Yadda Saxla'}
         </button>
 
         {saved && (
-          <div
-            className="mt-3 rounded-xl p-3 text-center text-[12px] font-medium"
-            style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', color: '#22c55e' }}
-          >
-            ✓ Ödəniş profili uğurla yeniləndi
+          <div className="mt-3 rounded-xl p-3 text-center text-[12px] font-medium bg-green-500/[0.08] border border-green-500/20 text-green-400">
+            ✓ Odenis profili ugurla yenilendi
           </div>
         )}
 
